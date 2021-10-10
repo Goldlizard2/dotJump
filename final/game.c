@@ -1,9 +1,40 @@
 #include "system.h"
+#include "tinygl.h"
+#include "pacer.h"
+#include "../fonts/font5x7_1.h"
+#include "navswitch.h"
+#include "button.h"
+#include "pio.h"
 #include <avr/io.h>
-#include <pio.h>
-#include <pacer.h>
-#include <navswitch.h>
-#include <timer.h>
+
+#define MESSAGE_RATE 10
+#define PACER_RATE 500
+#define MENU_TEXT "WELCOME"
+
+
+#define BUTTON_PIO PIO_DEFINE(PORT_D, 7)
+int button_pressed_p (void)
+{
+    return pio_input_get(BUTTON_PIO);
+}
+
+
+
+void initialize(void)
+{
+    tinygl_init(PACER_RATE);
+    pacer_init (PACER_RATE);
+    tinygl_font_set(&font5x7_1);
+    tinygl_text_speed_set(MESSAGE_RATE);
+    tinygl_text_mode_set(TINYGL_TEXT_MODE_SCROLL);
+    // Init button 1
+    pio_config_set(BUTTON_PIO, PIO_INPUT);
+}
+
+void displayMenu(void)
+{
+    tinygl_text(MENU_TEXT);
+}
 
 /** Define PIO pins driving LED matrix rows.  */
 static const pio_t rows[] =
@@ -56,12 +87,6 @@ static void setLedMatrix(void)
             pio_config_set (cols[i], PIO_OUTPUT_HIGH);
         }
     }
-}
-
-static void lowCharacherObject(void)
-/*two led high state that is entered when in the ducking state from pulling LED down*/
-{
-
 }
 
 static void highObject(void)
@@ -123,6 +148,21 @@ int main (void)
     TCCR1A = 0x00;
     TCCR1B = 0x05;
     TCCR1C = 0x00;
+    // Update menu
+    while (!navswitch_push_event_p(NAVSWITCH_PUSH) && !button_pressed_p())
+    {
+        pacer_wait();
+        tinygl_update();
+        navswitch_update();
+        button_update();
+    }
+
+    // GAME LOGIC HERE
+    tinygl_text("GAME");
+    while (1) {
+        pacer_wait();
+        tinygl_update();
+    }
     
     while (1)
     {
