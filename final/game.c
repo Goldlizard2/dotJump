@@ -122,6 +122,7 @@ static void jump(void)
 static void duck(void)
 /*duck moves the character object to lowCharacherObject and then resets to tallCharacterObject*/
 {
+    
     pio_config_set(rows[2], PIO_OUTPUT_LOW);
     for (uint8_t i = 0; i < 5; i++) {
         pio_config_set(cols[i], PIO_OUTPUT_HIGH);
@@ -149,7 +150,7 @@ int main (void)
     TCCR1B = 0x05;
     TCCR1C = 0x00;
     // Update menu
-    while (!navswitch_push_event_p(NAVSWITCH_PUSH) && !button_pressed_p())
+    /*while (!navswitch_push_event_p(NAVSWITCH_PUSH) && !button_pressed_p())
     {
         pacer_wait();
         tinygl_update();
@@ -162,7 +163,7 @@ int main (void)
     while (1) {
         pacer_wait();
         tinygl_update();
-    }
+    }*/
     
     while (1)
     {

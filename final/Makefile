@@ -34,21 +34,11 @@ display.o: ../../drivers/display.c ../../drivers/avr/system.h ../../drivers/disp
 ledmat.o: ../../drivers/ledmat.c ../../drivers/avr/pio.h ../../drivers/avr/system.h ../../drivers/ledmat.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
-<<<<<<< HEAD
-navswitch.o: ../../drivers/navswitch.c ../../drivers/avr/delay.h ../../drivers/avr/pio.h ../../drivers/avr/system.h ../../drivers/navswitch.h
-=======
 font.o: ../../utils/font.c ../../drivers/avr/system.h ../../utils/font.h
->>>>>>> ee9aa0e001b351ee779300f612fe491cb49bb83a
 	$(CC) -c $(CFLAGS) $< -o $@
 
 pacer.o: ../../utils/pacer.c ../../drivers/avr/system.h ../../drivers/avr/timer.h ../../utils/pacer.h
 	$(CC) -c $(CFLAGS) $< -o $@
-<<<<<<< HEAD
-
-
-# Link: create ELF output file from object files.
-game.out: game.o pio.o system.o timer.o display.o ledmat.o navswitch.o pacer.o
-=======
 
 tinygl.o: ../../utils/tinygl.c ../../drivers/avr/system.h ../../drivers/display.h ../../utils/font.h ../../utils/tinygl.h
 	$(CC) -c $(CFLAGS) $< -o $@
@@ -63,7 +53,6 @@ button.o: ../../drivers/button.c ../../drivers/avr/pio.h ../../drivers/avr/syste
 
 # Link: create ELF output file from object files.
 game.out: game.o pio.o system.o timer.o display.o ledmat.o font.o pacer.o tinygl.o navswitch.o button.o
->>>>>>> ee9aa0e001b351ee779300f612fe491cb49bb83a
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 	$(SIZE) $@
 
