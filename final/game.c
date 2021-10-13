@@ -73,7 +73,7 @@ static void clearDisplay(void)
     }
 }
 
-static void tallCharacterObject(void)
+static void characterObject(void)
 /*three led high object for a character model*/
 {
     clearDisplay();
@@ -139,12 +139,6 @@ static void jump(void)
     for (uint8_t j = 0; j<3 ; j++) {
          pio_config_set(cols[j], PIO_OUTPUT_LOW);
     }
-    delay(500);
-    for (uint8_t i = 0; i < 5; i++) {
-        pio_config_set(cols[i], PIO_OUTPUT_HIGH);
-    }
-    tallCharacterObject();
-
 }
 
 static void duck(void)
@@ -158,14 +152,11 @@ static void duck(void)
     for (uint8_t j = 3; j<5 ; j++) {
          pio_config_set(cols[j], PIO_OUTPUT_LOW);
     }
-    delay(500);
-    for (uint8_t i = 3; i < 5; i++) {
-        pio_config_set(cols[i], PIO_OUTPUT_HIGH);
-    }
-    tallCharacterObject();
 }
 
 bool collision(uint8_t lowObjectLoc, uint8_t highObjectLoc, bool jump, bool duck)
+/* Checks if high and low objects are at player position and if so that
+the player is performing the correct action to dodge */
 {
     return ((lowObjectLoc == 2 && !jump) || (highObjectLoc == 2 && !duck));
 }
@@ -195,12 +186,10 @@ int main (void)
 
     while (1)
     {
-        // highObject(&highObjectLoc);
-        // delay(500);
+        pacer_wait();
         lowObject(&lowObjectLoc);
-        delay(300);
-        tallCharacterObject();
-        delay(50);
+        characterObject();
+
 
         navswitch_update ();
 
@@ -212,6 +201,8 @@ int main (void)
         {
             duck();
         }
+
+        characterObject();
 
         if(collision(lowObjectLoc, highObjectLoc, navswitch_push_event_p (NAVSWITCH_WEST), navswitch_push_event_p (NAVSWITCH_EAST))) {
             break;
