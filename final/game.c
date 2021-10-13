@@ -7,9 +7,10 @@
 #include "pio.h"
 #include <avr/io.h>
 
-#define MESSAGE_RATE 10
-#define PACER_RATE 500
+#define MESSAGE_RATE 20
+#define PACER_RATE 1000
 #define MENU_TEXT "WELCOME"
+#define END_TEXT "GAME OVER"
 
 
 #define BUTTON_PIO PIO_DEFINE(PORT_D, 7)
@@ -29,11 +30,6 @@ void initialize(void)
     tinygl_text_mode_set(TINYGL_TEXT_MODE_SCROLL);
     // Init button 1
     pio_config_set(BUTTON_PIO, PIO_INPUT);
-}
-
-void displayMenu(void)
-{
-    tinygl_text(MENU_TEXT);
 }
 
 /** Define PIO pins driving LED matrix rows.  */
@@ -169,6 +165,10 @@ static void duck(void)
     tallCharacterObject();
 }
 
+bool collision(uint8_t lowObjectLoc, uint8_t highObjectLoc, bool jump, bool duck)
+{
+    return ((lowObjectLoc == 2 && !jump) || (highObjectLoc == 2 && !duck));
+}
 
 int main (void)
 {
@@ -176,28 +176,22 @@ int main (void)
 
     system_init ();
     navswitch_init ();
-    pacer_init(1000);
+    initialize();
     setLedMatrix();
     TCCR1A = 0x00;
     TCCR1B = 0x05;
     TCCR1C = 0x00;
+    uint8_t highObjectLoc = 6;
+    uint8_t lowObjectLoc = 6;
+    tinygl_text(MENU_TEXT);
     // Update menu
-    /*while (!navswitch_push_event_p(NAVSWITCH_PUSH) && !button_pressed_p())
+    while (!navswitch_push_event_p(NAVSWITCH_PUSH) && !button_pressed_p())
     {
         pacer_wait();
         tinygl_update();
         navswitch_update();
         button_update();
     }
-
-    // GAME LOGIC HERE
-    tinygl_text("GAME");
-    while (1) {
-        pacer_wait();
-        tinygl_update();
-    }*/
-    uint8_t highObjectLoc = 6;
-    uint8_t lowObjectLoc = 6;
 
     while (1)
     {
@@ -219,11 +213,16 @@ int main (void)
             duck();
         }
 
+        if(collision(lowObjectLoc, highObjectLoc, navswitch_push_event_p (NAVSWITCH_WEST), navswitch_push_event_p (NAVSWITCH_EAST))) {
+            break;
+        }
 
 
+    }
 
-
-
-
+    tinygl_text(END_TEXT);
+    while (1) {
+        pacer_wait();
+        tinygl_update();
     }
 }
