@@ -195,12 +195,7 @@ int main (void)
 
         if (navswitch_push_event_p (NAVSWITCH_WEST))
         {
-<<<<<<< HEAD
             jump();
-            tallCharacterObject();    
-=======
-           jump();
->>>>>>> 51011756a1372abfc76b791abba641fc78b18c29
         }
 
         if (navswitch_push_event_p (NAVSWITCH_EAST))
