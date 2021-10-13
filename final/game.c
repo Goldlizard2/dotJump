@@ -175,6 +175,8 @@ int main (void)
     uint8_t highObjectLoc = 6;
     uint8_t lowObjectLoc = 6;
     uint16_t counter = 0;
+    bool jumping = false;
+    bool ducking = false;
     tinygl_text(MENU_TEXT);
     // Update menu
     while (!navswitch_push_event_p(NAVSWITCH_PUSH) && !button_pressed_p())
@@ -185,35 +187,44 @@ int main (void)
         button_update();
     }
 
+
     while (1)
     {
-        pacer_wait();
+        if (jumping) {
+            jump();
+        } else if (ducking) {
+            duck();
+        } else {
+            characterObject();
+        }
         counter++;
-        lowObject(&lowObjectLoc);
-        characterObject();
-
+        //lowObject(&lowObjectLoc);
+        delay(50);
+        clearDisplay();
+        delay(50);
 
         navswitch_update ();
 
-        if (navswitch_push_event_p (NAVSWITCH_WEST))
+        if (navswitch_push_event_p (NAVSWITCH_WEST) && !ducking)
         {
-            jump();
+            jumping = true;
         }
 
-        if (navswitch_push_event_p (NAVSWITCH_EAST))
+        if (navswitch_push_event_p (NAVSWITCH_EAST) && !jumping)
         {
-            duck();
+            ducking = true;
         }
 
-
-        if(collision(lowObjectLoc, highObjectLoc, navswitch_push_event_p (NAVSWITCH_WEST), navswitch_push_event_p (NAVSWITCH_EAST))) {
+        if(collision(lowObjectLoc, highObjectLoc, jumping, ducking)) {
             break;
         }
-
-        if (counter == 1000) {
+        if (counter == 600) {
+            counter = 0;
             characterObject();
             lowObjectLoc++;
             highObjectLoc++;
+            jumping = false;
+            ducking = false;
         }
 
     }
