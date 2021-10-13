@@ -195,12 +195,12 @@ int main (void)
 
     while (1)
     {
-        highObject(&highObjectLoc);
-        delay(500);
+        // highObject(&highObjectLoc);
+        // delay(500);
         lowObject(&lowObjectLoc);
-        delay(500);
+        delay(300);
         tallCharacterObject();
-        delay(500);
+        delay(50);
 
         navswitch_update ();
 
