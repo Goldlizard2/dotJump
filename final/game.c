@@ -211,7 +211,6 @@ int main (void)
 
         if(collision(lowObjectLoc, highObjectLoc, navswitch_push_event_p (NAVSWITCH_WEST), navswitch_push_event_p (NAVSWITCH_EAST))) {
             break;
->>>>>>> 51011756a1372abfc76b791abba641fc78b18c29
         }
 
 
