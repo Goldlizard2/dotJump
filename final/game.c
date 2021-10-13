@@ -173,11 +173,14 @@ int main (void)
 
         if (navswitch_push_event_p (NAVSWITCH_WEST))
         {
-            jump();        
+            jump();
+            tallCharacterObject();    
         }
+
         if (navswitch_push_event_p (NAVSWITCH_EAST))
         {
-            duck();        
+            duck();
+            tallCharacterObject();         
         }
         
         
