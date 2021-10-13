@@ -174,6 +174,7 @@ int main (void)
     TCCR1C = 0x00;
     uint8_t highObjectLoc = 6;
     uint8_t lowObjectLoc = 6;
+    uint16_t counter = 0;
     tinygl_text(MENU_TEXT);
     // Update menu
     while (!navswitch_push_event_p(NAVSWITCH_PUSH) && !button_pressed_p())
@@ -187,6 +188,7 @@ int main (void)
     while (1)
     {
         pacer_wait();
+        counter++;
         lowObject(&lowObjectLoc);
         characterObject();
 
@@ -203,16 +205,16 @@ int main (void)
             duck();
         }
 
-        characterObject();
 
         if(collision(lowObjectLoc, highObjectLoc, navswitch_push_event_p (NAVSWITCH_WEST), navswitch_push_event_p (NAVSWITCH_EAST))) {
             break;
         }
 
-        if(collision(lowObjectLoc, highObjectLoc, navswitch_push_event_p (NAVSWITCH_WEST), navswitch_push_event_p (NAVSWITCH_EAST))) {
-            break;
+        if (counter == 1000) {
+            characterObject();
+            lowObjectLoc++;
+            highObjectLoc++;
         }
-
 
     }
 
