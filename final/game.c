@@ -70,7 +70,7 @@ static void delay (uint16_t milliseconds) {
 static void clearDisplay(void)
 {
     for (uint8_t i = 0; i < 5; i++) {
-        pio_config_set(cols[i], PIO_OUTPUT_LOW);
+        pio_config_set(cols[i], PIO_OUTPUT_HIGH);
     }
     for (uint8_t j = 0; j<7 ; j++) {
          pio_config_set(rows[j], PIO_OUTPUT_HIGH);
@@ -80,10 +80,11 @@ static void clearDisplay(void)
 static void tallCharacterObject(void)
 /*three led high object for a character model*/
 {
-        pio_config_set(rows[2], PIO_OUTPUT_LOW);
-        for (uint8_t i = 2; i < 5; i++) {
-            pio_config_set(cols[i], PIO_OUTPUT_LOW);
-        }
+    clearDisplay();
+    pio_config_set(rows[2], PIO_OUTPUT_LOW);
+    for (uint8_t i = 2; i < 5; i++) {
+        pio_config_set(cols[i], PIO_OUTPUT_LOW);
+    }
 }
 
 static void setLedMatrix(void)
@@ -97,31 +98,39 @@ static void setLedMatrix(void)
     }
 }
 
-static void highObject(uint8_t row)
+static void highObject(uint8_t* row)
 /*3 led object from the roof that can be ducked under*/
 {
-    if (row<=6) {
-        pio_config_set(rows[row], PIO_OUTPUT_LOW);
-        for (uint8_t i = 0; i < 5; i++) {
-            pio_config_set(cols[i], PIO_OUTPUT_HIGH);
-        }
+    if (*row<=6) {
+        clearDisplay();
+        pio_config_set(rows[*row], PIO_OUTPUT_LOW);
         for (uint8_t j = 0; j<3 ; j++) {
              pio_config_set(cols[j], PIO_OUTPUT_LOW);
         }
-        delay(500);
-        clearDisplay();
-        highObject(row-1);
 
+        (*row)--;
+
+    } else {
+        *row = 6;
     }
 
 
 }
 
-static void lowObject(void)
+static void lowObject(uint8_t* row)
 /*one led object along the ground that can be jumped*/
 {
+    if (*row<=6) {
+        clearDisplay();
+        pio_config_set(rows[*row], PIO_OUTPUT_LOW);
+        for (uint8_t i = 3; i < 5; i++) {
+            pio_config_set(cols[i], PIO_OUTPUT_LOW);
+        }
+        (*row)--;
 
-
+    } else {
+        *row = 6;
+    }
 }
 
 static void jump(void)
@@ -187,20 +196,27 @@ int main (void)
         pacer_wait();
         tinygl_update();
     }*/
-    highObject(6);
+    uint8_t highObjectLoc = 6;
+    uint8_t lowObjectLoc = 6;
+
     while (1)
     {
-
+        highObject(&highObjectLoc);
+        delay(500);
+        lowObject(&lowObjectLoc);
+        delay(500);
+        tallCharacterObject();
+        delay(500);
 
         navswitch_update ();
 
         if (navswitch_push_event_p (NAVSWITCH_WEST))
         {
-           // jump();
+           jump();
         }
         if (navswitch_push_event_p (NAVSWITCH_EAST))
         {
-            //duck();
+            duck();
         }
 
 
