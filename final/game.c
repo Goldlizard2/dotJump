@@ -95,42 +95,36 @@ static void setLedMatrix(void)
     }
 }
 
-static void highObject(uint8_t* row)
+static void highObject(uint8_t row)
 /*3 led object from the roof that can be ducked under*/
 {
-    if (*row<=6) {
+    if (row<=6) {
         clearDisplay();
-        pio_config_set(rows[*row], PIO_OUTPUT_LOW);
+        pio_config_set(rows[row], PIO_OUTPUT_LOW);
         for (uint8_t j = 0; j<3 ; j++) {
              pio_config_set(cols[j], PIO_OUTPUT_LOW);
         }
-
-    } else {
-        *row = 6;
     }
-
-
 }
 
-static void lowObject(uint8_t* row)
+static void lowObject(uint8_t row)
 /*one led object along the ground that can be jumped*/
 {
-    if (*row<=6) {
+    if (row<=6) {
         clearDisplay();
-        pio_config_set(rows[*row], PIO_OUTPUT_LOW);
+        pio_config_set(rows[row], PIO_OUTPUT_LOW);
         for (uint8_t i = 3; i < 5; i++) {
             pio_config_set(cols[i], PIO_OUTPUT_LOW);
         }
-
-    } else {
-        *row = 6;
     }
 }
 
 static void jump(void)
 /*jump moves the character object up two leds then falls*/
 {
+    clearDisplay();
     pio_config_set(rows[2], PIO_OUTPUT_LOW);
+    // TODO check if this loop can be removed
     for (uint8_t i = 0; i < 5; i++) {
         pio_config_set(cols[i], PIO_OUTPUT_HIGH);
     }
@@ -142,8 +136,9 @@ static void jump(void)
 static void duck(void)
 /*duck moves the character object to lowCharacherObject and then resets to tallCharacterObject*/
 {
-
+    clearDisplay();
     pio_config_set(rows[2], PIO_OUTPUT_LOW);
+    // TODO check if this loop can be removed
     for (uint8_t i = 0; i < 5; i++) {
         pio_config_set(cols[i], PIO_OUTPUT_HIGH);
     }
@@ -170,7 +165,7 @@ int main (void)
     TCCR1A = 0x00;
     TCCR1B = 0x05;
     TCCR1C = 0x00;
-    uint8_t highObjectLoc = 3;
+    uint8_t highObjectLoc = 9;
     uint8_t lowObjectLoc = 6;
     uint16_t objectCounter = 0;
     uint8_t moveCounter = 0;
@@ -205,9 +200,9 @@ int main (void)
         moveCounter++;
 
         delay(5);
-        lowObject(&lowObjectLoc);
+        lowObject(lowObjectLoc);
         delay(5);
-        highObject(&highObjectLoc);
+        highObject(highObjectLoc);
         delay(5);
 
         navswitch_update ();
@@ -237,6 +232,12 @@ int main (void)
             objectCounter = 0;
             lowObjectLoc--;
             highObjectLoc--;
+            if (lowObjectLoc>10){
+                lowObjectLoc = 8;
+            }
+            if (highObjectLoc>10){
+                highObjectLoc = 8;
+            }
         }
         // Reset player state
         if (moveCounter == 70) {
