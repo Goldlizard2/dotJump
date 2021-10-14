@@ -188,8 +188,10 @@ int main (void)
     }
 
 
+    // Main game loop (note - delay should be kept to ~16ms)
     while (1)
     {
+        // Display player in current state
         if (jumping) {
             jump();
         } else if (ducking) {
@@ -197,8 +199,11 @@ int main (void)
         } else {
             characterObject();
         }
+
+        // Update counters
         objectCounter++;
         moveCounter++;
+
         delay(5);
         lowObject(&lowObjectLoc);
         delay(5);
@@ -207,26 +212,33 @@ int main (void)
 
         navswitch_update ();
 
+
+        // Check if player is trying to jump
         if (navswitch_push_event_p (NAVSWITCH_WEST) && !ducking)
         {
             jumping = true;
             moveCounter = 0;
         }
 
+        // Check is player is trying to duck
         if (navswitch_push_event_p (NAVSWITCH_EAST) && !jumping)
         {
             ducking = true;
             moveCounter = 0;
         }
 
+        // Check if a collision occured (TODO check if this could be done when object is updated)
         if(collision(lowObjectLoc, highObjectLoc, jumping, ducking)) {
             break;
         }
+
+        // Update obstacles
         if (objectCounter == 30) {
             objectCounter = 0;
             lowObjectLoc--;
             // highObjectLoc--;
         }
+        // Reset player state
         if (moveCounter == 70) {
             moveCounter = 0;
             jumping = false;
