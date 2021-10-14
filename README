@@ -14,3 +14,27 @@ The use the git push command to copy the changes to the remote git server
 
 git push
 
+Constructing game:
+First clone the latest copy from git, to the final folder under:
+
+user/Documents/Ence260/embeddedSystems/ence260-ucfk4/assignment/final
+
+From here reset your UCFK4 with the S2 button 
+Then run make program command to make the program on the UCFK4
+
+At this point you will be greeted with WELCOME TO LIGHT JUMP
+point the board towards you with the yello led in the top right and the micro USB port pointed to the right.
+
+When ready to start playing press the joystick in
+your player should appear as a 3 LED high figure 
+The controls are:
+
+Pressing the joystick up to jump
+Pressing the joystick down to duck
+
+From here items will gradually flow at you along the cieling of the display or the floor and the object of the game is to doge as many of the items as possible
+
+You have one life and will be greeted with "Game Over" if you unsuccesful avoid an item.
+
+The amount of items dodged will then be desplayed and you can press the centre again to restart.
+
