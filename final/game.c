@@ -95,42 +95,36 @@ static void setLedMatrix(void)
     }
 }
 
-static void highObject(uint8_t* row)
+static void highObject(uint8_t row)
 /*3 led object from the roof that can be ducked under*/
 {
-    if (*row<=6) {
+    if (row<=6) {
         clearDisplay();
-        pio_config_set(rows[*row], PIO_OUTPUT_LOW);
+        pio_config_set(rows[row], PIO_OUTPUT_LOW);
         for (uint8_t j = 0; j<3 ; j++) {
              pio_config_set(cols[j], PIO_OUTPUT_LOW);
         }
-
-    } else {
-        *row = 6;
     }
-
-
 }
 
-static void lowObject(uint8_t* row)
+static void lowObject(uint8_t row)
 /*one led object along the ground that can be jumped*/
 {
-    if (*row<=6) {
+    if (row<=6) {
         clearDisplay();
-        pio_config_set(rows[*row], PIO_OUTPUT_LOW);
+        pio_config_set(rows[row], PIO_OUTPUT_LOW);
         for (uint8_t i = 3; i < 5; i++) {
             pio_config_set(cols[i], PIO_OUTPUT_LOW);
         }
-
-    } else {
-        *row = 6;
     }
 }
 
 static void jump(void)
 /*jump moves the character object up two leds then falls*/
 {
+    clearDisplay();
     pio_config_set(rows[2], PIO_OUTPUT_LOW);
+    // TODO check if this loop can be removed
     for (uint8_t i = 0; i < 5; i++) {
         pio_config_set(cols[i], PIO_OUTPUT_HIGH);
     }
@@ -142,8 +136,9 @@ static void jump(void)
 static void duck(void)
 /*duck moves the character object to lowCharacherObject and then resets to tallCharacterObject*/
 {
-
+    clearDisplay();
     pio_config_set(rows[2], PIO_OUTPUT_LOW);
+    // TODO check if this loop can be removed
     for (uint8_t i = 0; i < 5; i++) {
         pio_config_set(cols[i], PIO_OUTPUT_HIGH);
     }
@@ -170,7 +165,7 @@ int main (void)
     TCCR1A = 0x00;
     TCCR1B = 0x05;
     TCCR1C = 0x00;
-    uint8_t highObjectLoc = 6;
+    uint8_t highObjectLoc = 9;
     uint8_t lowObjectLoc = 6;
     uint16_t objectCounter = 0;
     uint8_t moveCounter = 0;
@@ -188,8 +183,10 @@ int main (void)
     }
 
 
+    // Main game loop (note - delay should be kept to ~16ms)
     while (1)
     {
+        // Display player in current state
         if (jumping) {
             jump();
         } else if (ducking) {
@@ -197,36 +194,52 @@ int main (void)
         } else {
             characterObject();
         }
+
+        // Update counters
         objectCounter++;
         moveCounter++;
+
         delay(5);
-        lowObject(&lowObjectLoc);
+        lowObject(lowObjectLoc);
         delay(5);
-        clearDisplay();
+        highObject(highObjectLoc);
         delay(5);
 
         navswitch_update ();
 
+
+        // Check if player is trying to jump
         if (navswitch_push_event_p (NAVSWITCH_WEST) && !ducking)
         {
             jumping = true;
             moveCounter = 0;
         }
 
+        // Check is player is trying to duck
         if (navswitch_push_event_p (NAVSWITCH_EAST) && !jumping)
         {
             ducking = true;
             moveCounter = 0;
         }
 
+        // Check if a collision occured (TODO check if this could be done when object is updated)
         if(collision(lowObjectLoc, highObjectLoc, jumping, ducking)) {
             break;
         }
+
+        // Update obstacles
         if (objectCounter == 30) {
             objectCounter = 0;
             lowObjectLoc--;
-            // highObjectLoc--;
+            highObjectLoc--;
+            if (lowObjectLoc>10){
+                lowObjectLoc = 8;
+            }
+            if (highObjectLoc>10){
+                highObjectLoc = 8;
+            }
         }
+        // Reset player state
         if (moveCounter == 70) {
             moveCounter = 0;
             jumping = false;
