@@ -1,15 +1,15 @@
 #include "system.h"
 #include "tinygl.h"
 #include "pacer.h"
-#include "../fonts/font5x7_1.h"
+#include "../fonts/font5x5_1.h"
 #include "navswitch.h"
 #include "button.h"
 #include "pio.h"
 #include <avr/io.h>
 
-#define MESSAGE_RATE 20
+#define MESSAGE_RATE 40
 #define PACER_RATE 1000
-#define MENU_TEXT "WELCOME"
+#define MENU_TEXT "WELCOME TO LIGHT JUMP"
 #define END_TEXT "GAME OVER"
 
 
@@ -25,9 +25,10 @@ void initialize(void)
 {
     tinygl_init(PACER_RATE);
     pacer_init (PACER_RATE);
-    tinygl_font_set(&font5x7_1);
+    tinygl_font_set (&font5x5_1);
     tinygl_text_speed_set(MESSAGE_RATE);
     tinygl_text_mode_set(TINYGL_TEXT_MODE_SCROLL);
+    tinygl_text_dir_set (TINYGL_TEXT_DIR_ROTATE);
     // Init button 1
     pio_config_set(BUTTON_PIO, PIO_INPUT);
 }
@@ -199,9 +200,9 @@ int main (void)
         }
         counter++;
         //lowObject(&lowObjectLoc);
-        delay(50);
+        delay(8);
         clearDisplay();
-        delay(50);
+        delay(8);
 
         navswitch_update ();
 
@@ -218,7 +219,7 @@ int main (void)
         if(collision(lowObjectLoc, highObjectLoc, jumping, ducking)) {
             break;
         }
-        if (counter == 600) {
+        if (counter == 100) {
             counter = 0;
             characterObject();
             lowObjectLoc++;
