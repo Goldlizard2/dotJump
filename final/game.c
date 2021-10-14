@@ -170,7 +170,7 @@ int main (void)
     TCCR1A = 0x00;
     TCCR1B = 0x05;
     TCCR1C = 0x00;
-    uint8_t highObjectLoc = 6;
+    uint8_t highObjectLoc = 3;
     uint8_t lowObjectLoc = 6;
     uint16_t objectCounter = 0;
     uint8_t moveCounter = 0;
@@ -207,7 +207,7 @@ int main (void)
         delay(5);
         lowObject(&lowObjectLoc);
         delay(5);
-        clearDisplay();
+        highObject(&highObjectLoc);
         delay(5);
 
         navswitch_update ();
@@ -236,7 +236,7 @@ int main (void)
         if (objectCounter == 30) {
             objectCounter = 0;
             lowObjectLoc--;
-            // highObjectLoc--;
+            highObjectLoc--;
         }
         // Reset player state
         if (moveCounter == 70) {
