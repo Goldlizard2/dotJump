@@ -105,8 +105,6 @@ static void highObject(uint8_t* row)
              pio_config_set(cols[j], PIO_OUTPUT_LOW);
         }
 
-        (*row)--;
-
     } else {
         *row = 6;
     }
@@ -123,7 +121,6 @@ static void lowObject(uint8_t* row)
         for (uint8_t i = 3; i < 5; i++) {
             pio_config_set(cols[i], PIO_OUTPUT_LOW);
         }
-        (*row)--;
 
     } else {
         *row = 6;
@@ -175,9 +172,11 @@ int main (void)
     TCCR1C = 0x00;
     uint8_t highObjectLoc = 6;
     uint8_t lowObjectLoc = 6;
-    uint16_t counter = 0;
+    uint16_t objectCounter = 0;
+    uint8_t moveCounter = 0;
     bool jumping = false;
     bool ducking = false;
+
     tinygl_text(MENU_TEXT);
     // Update menu
     while (!navswitch_push_event_p(NAVSWITCH_PUSH) && !button_pressed_p())
@@ -198,32 +197,38 @@ int main (void)
         } else {
             characterObject();
         }
-        counter++;
-        //lowObject(&lowObjectLoc);
-        delay(8);
+        objectCounter++;
+        moveCounter++;
+        delay(5);
+        lowObject(&lowObjectLoc);
+        delay(5);
         clearDisplay();
-        delay(8);
+        delay(5);
 
         navswitch_update ();
 
         if (navswitch_push_event_p (NAVSWITCH_WEST) && !ducking)
         {
             jumping = true;
+            moveCounter = 0;
         }
 
         if (navswitch_push_event_p (NAVSWITCH_EAST) && !jumping)
         {
             ducking = true;
+            moveCounter = 0;
         }
 
         if(collision(lowObjectLoc, highObjectLoc, jumping, ducking)) {
             break;
         }
-        if (counter == 100) {
-            counter = 0;
-            characterObject();
-            lowObjectLoc++;
-            highObjectLoc++;
+        if (objectCounter == 30) {
+            objectCounter = 0;
+            lowObjectLoc--;
+            // highObjectLoc--;
+        }
+        if (moveCounter == 70) {
+            moveCounter = 0;
             jumping = false;
             ducking = false;
         }
