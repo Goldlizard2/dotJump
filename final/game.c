@@ -12,15 +12,6 @@
 #define MENU_TEXT "WELCOME TO LIGHT JUMP"
 #define END_TEXT "GAME OVER"
 
-
-#define BUTTON_PIO PIO_DEFINE(PORT_D, 7)
-int button_pressed_p (void)
-{
-    return pio_input_get(BUTTON_PIO);
-}
-
-
-
 void initialize(void)
 {
     tinygl_init(PACER_RATE);
@@ -29,8 +20,6 @@ void initialize(void)
     tinygl_text_speed_set(MESSAGE_RATE);
     tinygl_text_mode_set(TINYGL_TEXT_MODE_SCROLL);
     tinygl_text_dir_set (TINYGL_TEXT_DIR_ROTATE);
-    // Init button 1
-    pio_config_set(BUTTON_PIO, PIO_INPUT);
 }
 
 /** Define PIO pins driving LED matrix rows.  */
@@ -154,104 +143,117 @@ the player is performing the correct action to dodge */
     return ((lowObjectLoc == 2 && !jump) || (highObjectLoc == 2 && !duck));
 }
 
+bool navSwitchMoved(void)
+{
+    return (navswitch_push_event_p(NAVSWITCH_PUSH) || navswitch_push_event_p(NAVSWITCH_NORTH) || navswitch_push_event_p(NAVSWITCH_SOUTH) || navswitch_push_event_p(NAVSWITCH_EAST) || navswitch_push_event_p(NAVSWITCH_WEST));
+}
+
 int main (void)
 {
-    //uint8_t current_column = 0;
+    // Full game loop
+    while(1) {
 
-    system_init ();
-    navswitch_init ();
-    initialize();
-    setLedMatrix();
-    TCCR1A = 0x00;
-    TCCR1B = 0x05;
-    TCCR1C = 0x00;
-    uint8_t highObjectLoc = 9;
-    uint8_t lowObjectLoc = 6;
-    uint8_t dodgeditems = 0;
-    uint16_t objectCounter = 0;
-    uint8_t moveCounter = 0;
-    bool jumping = false;
-    bool ducking = false;
+        system_init ();
+        navswitch_init ();
+        initialize();
+        setLedMatrix();
+        TCCR1A = 0x00;
+        TCCR1B = 0x05;
+        TCCR1C = 0x00;
+        uint8_t highObjectLoc = 9;
+        uint8_t lowObjectLoc = 6;
+        uint16_t objectCounter = 0;
+        uint8_t moveCounter = 0;
+        bool jumping = false;
+        bool ducking = false;
 
-    tinygl_text(MENU_TEXT);
-    // Update menu
-    while (!navswitch_push_event_p(NAVSWITCH_PUSH) && !button_pressed_p())
-    {
-        pacer_wait();
-        tinygl_update();
+        tinygl_text(MENU_TEXT);
+        // Start Menu
+        while (!navSwitchMoved())
+        {
+            pacer_wait();
+            tinygl_update();
+            navswitch_update();
+        }
+
+
+        // Main game loop (note - delay should be kept to ~16ms)
+        while (1)
+        {
+            // Display player in current state
+            if (jumping) {
+                jump();
+            } else if (ducking) {
+                duck();
+            } else {
+                characterObject();
+            }
+
+            // Update counters
+            objectCounter++;
+            moveCounter++;
+
+            // Display objects and player
+            delay(5);
+            lowObject(lowObjectLoc);
+            delay(5);
+            highObject(highObjectLoc);
+            delay(5);
+
+            navswitch_update ();
+
+
+            // Check if player is trying to jump
+            if (navswitch_push_event_p (NAVSWITCH_WEST) && !ducking)
+            {
+                jumping = true;
+                moveCounter = 0;
+            }
+
+            // Check is player is trying to duck
+            if (navswitch_push_event_p (NAVSWITCH_EAST) && !jumping)
+            {
+                ducking = true;
+                moveCounter = 0;
+            }
+
+            // Check if a collision occured (TODO check if this could be done when object is updated)
+            if(collision(lowObjectLoc, highObjectLoc, jumping, ducking)) {
+                break;
+            }
+
+            // Update obstacles
+            if (objectCounter == 30) {
+                objectCounter = 0;
+                lowObjectLoc--;
+                highObjectLoc--;
+                if (lowObjectLoc>10){
+                    lowObjectLoc = 8;
+                }
+                if (highObjectLoc>10){
+                    highObjectLoc = 8;
+                }
+            }
+
+            // Reset player state
+            if (moveCounter == 70) {
+                moveCounter = 0;
+                jumping = false;
+                ducking = false;
+            }
+
+        }
+
+        // Game over screen
+        tinygl_text(END_TEXT);
+        while (!navSwitchMoved()) {
+            pacer_wait();
+            tinygl_update();
+            navswitch_update();
+        }
+        // Delay to prevent accidental extra press
+        delay(100);
         navswitch_update();
-        button_update();
     }
 
-
-    // Main game loop (note - delay should be kept to ~16ms)
-    while (1)
-    {
-        // Display player in current state
-        if (jumping) {
-            jump();
-        } else if (ducking) {
-            duck();
-        } else {
-            characterObject();
-        }
-
-        // Update counters
-        objectCounter++;
-        moveCounter++;
-
-        delay(5);
-        lowObject(lowObjectLoc);
-        delay(5);
-        highObject(highObjectLoc);
-        delay(5);
-
-        navswitch_update ();
-
-
-        // Check if player is trying to jump
-        if (navswitch_push_event_p (NAVSWITCH_WEST) && !ducking)
-        {
-            jumping = true;
-            moveCounter = 0;
-        }
-
-        // Check is player is trying to duck
-        if (navswitch_push_event_p (NAVSWITCH_EAST) && !jumping)
-        {
-            ducking = true;
-            moveCounter = 0;
-        }
-
-        // Check if a collision occured (TODO check if this could be done when object is updated)
-        if(collision(lowObjectLoc, highObjectLoc, jumping, ducking)) {
-            break;
-        }
-
-        // Update obstacles
-        if (objectCounter == 30) {
-            objectCounter = 0;
-            lowObjectLoc--;
-            highObjectLoc--;
-            if (lowObjectLoc>10){
-                lowObjectLoc = 8;
-            }
-            if (highObjectLoc>10){
-                highObjectLoc = 8;
-            }
-        }
-        // Reset player state
-        if (moveCounter == 70) {
-            moveCounter = 0;
-            jumping = false;
-            ducking = false;
-        }
-
-    }
-
-    tinygl_text(END_TEXT);
-    while (1) {
-        pacer_wait();
-        tinygl_update();
-    }
 }
