@@ -7,7 +7,7 @@
 #include "pio.h"
 #include <avr/io.h>
 
-#define MESSAGE_RATE 40
+#define MESSAGE_RATE 60
 #define PACER_RATE 1000
 #define MENU_TEXT "WELCOME TO LIGHT JUMP"
 #define END_TEXT "GAME OVER"
@@ -167,6 +167,7 @@ int main (void)
     TCCR1C = 0x00;
     uint8_t highObjectLoc = 9;
     uint8_t lowObjectLoc = 6;
+    uint8_t dodgeditems = 0;
     uint16_t objectCounter = 0;
     uint8_t moveCounter = 0;
     bool jumping = false;
