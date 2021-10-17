@@ -8,6 +8,8 @@
 #include <avr/io.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
 #define MESSAGE_RATE 50
 #define PACER_RATE 1000
@@ -160,10 +162,12 @@ int main (void)
         system_init ();
         navswitch_init ();
         initialize();
+        srand(time(NULL));
         setLedMatrix();
         TCCR1A = 0x00;
         TCCR1B = 0x05;
         TCCR1C = 0x00;
+        uint8_t randomItem = 0;
         uint8_t highObjectLoc = 9;
         uint8_t lowObjectLoc = 6;
         uint8_t objectCounter = 0;
@@ -198,7 +202,7 @@ int main (void)
             // Update counters
             objectCounter++;
             moveCounter++;
-
+            randomItem = rand() % 2;
             // Display objects and player
             delay(5);
             lowObject(lowObjectLoc);
@@ -241,10 +245,10 @@ int main (void)
                 objectCounter = 0;
                 lowObjectLoc--;
                 highObjectLoc--;
-                if (lowObjectLoc>10){
+                if (lowObjectLoc>10 && randomItem == 1) {
                     lowObjectLoc = 8;
                 }
-                if (highObjectLoc>10){
+                if (highObjectLoc>10 && randomItem == 0) {
                     highObjectLoc = 8;
                 }
             }
