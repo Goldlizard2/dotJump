@@ -15,6 +15,8 @@
 #define PACER_RATE 1000
 #define MENU_TEXT "WELCOME TO LIGHT JUMP"
 #define END_TEXT "POINTS"
+#define PLAYER_UPDATE_COUNT 70
+#define OBJECT_UPDATE_COUNT 30
 
 void initialize(void)
 {
@@ -35,7 +37,7 @@ static const pio_t rows[] =
 };
 
 
-/** Define PIO pins driving LED matrix columns.  */
+/* Define PIO pins driving LED matrix columns.  */
 static const pio_t cols[] =
 {
     LEDMAT_COL1_PIO, LEDMAT_COL2_PIO, LEDMAT_COL3_PIO,
@@ -48,7 +50,8 @@ static const pio_t cols[] =
 
 }*/
 
-static void delay (uint16_t milliseconds) {
+static void delay (uint16_t milliseconds)
+{
     TCNT1 = 0;
     uint16_t time = milliseconds/0.128;
     while (TCNT1 < time) {
@@ -168,7 +171,9 @@ int main (void)
         uint8_t lowObjectLoc = 7;
         uint8_t objectCounter = 0;
         uint8_t moveCounter = 0;
+        uint8_t speedIncrease = 0;
         uint16_t score = 0;
+
         bool jumping = false;
         bool ducking = false;
         bool gameOver = false;
@@ -198,7 +203,7 @@ int main (void)
             // Update counters
             objectCounter++;
             moveCounter++;
-            
+
             // Display objects and player
             delay(5);
             lowObject(lowObjectLoc);
@@ -225,18 +230,21 @@ int main (void)
 
 
             // Reset player state
-            if (moveCounter == 70) {
+            if (moveCounter == PLAYER_UPDATE_COUNT) {
                 moveCounter = 0;
                 jumping = false;
                 ducking = false;
             }
 
             // Update obstacles
-            if (objectCounter == 30) {
+            if (objectCounter == (OBJECT_UPDATE_COUNT - speedIncrease) {
                 // Check if a collision occured
                 gameOver = collision(lowObjectLoc, highObjectLoc, jumping, ducking);
                 if (dodge(lowObjectLoc, highObjectLoc, jumping, ducking)) {
                     score++;
+                }
+                if (speedIncrease < 15) {
+                        speedIncrease = (score % 5);
                 }
                 objectCounter = 0;
                 if (randomItem == 1) {
@@ -245,7 +253,7 @@ int main (void)
                         lowObjectLoc = 8;
                         randomItem = rand() % 2;
                     }
-                    
+
                 }
                 if (randomItem == 0) {
                     highObjectLoc--;
@@ -256,13 +264,13 @@ int main (void)
                 }
             }
 
-            
+
         }
 
         // Game over screen
         // Convert score to a string
         char sscore[8];
-        sprintf(sscore, "%d ", score);
+        sprintf(sscore, " %d ", score);
         // Set end game text
         tinygl_text(strcat(sscore, END_TEXT));
         // Display end game screen
