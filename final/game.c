@@ -16,12 +16,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 #define MESSAGE_RATE 50
 #define PACER_RATE 1000
 #define MENU_TEXT "WELCOME TO LIGHT JUMP"
 #define END_TEXT "POINTS"
-#define PLAYER_UPDATE_COUNT 70
+#define PLAYER_UPDATE_COUNT 60
 #define OBJECT_UPDATE_COUNT 30
 
 void initialize(void)
@@ -210,14 +211,14 @@ int main (void)
 
 
             // Check if player is trying to jump
-            if (navswitch_push_event_p (NAVSWITCH_WEST) && !ducking)
+            if (navswitch_push_event_p (NAVSWITCH_WEST) && !ducking && !jumping)
             {
                 jumping = true;
                 moveCounter = 0;
             }
 
             // Check is player is trying to duck
-            if (navswitch_push_event_p (NAVSWITCH_EAST) && !jumping)
+            if (navswitch_push_event_p (NAVSWITCH_EAST) && !jumping && !ducking)
             {
                 ducking = true;
                 moveCounter = 0;
@@ -225,7 +226,7 @@ int main (void)
 
 
             // Reset player state
-            if (moveCounter == PLAYER_UPDATE_COUNT) {
+            if (moveCounter == PLAYER_UPDATE_COUNT - floor(speedIncrease/2)) {
                 moveCounter = 0;
                 jumping = false;
                 ducking = false;
@@ -238,8 +239,8 @@ int main (void)
                 if (dodge(lowObjectLoc, highObjectLoc, jumping, ducking)) {
                     score++;
                 }
-                if (speedIncrease < 15) {
-                        speedIncrease = (score % 5);
+                if (speedIncrease < 22) {
+                        speedIncrease = floor(score / 2);
                 }
                 objectCounter = 0;
                 if (randomItem == 1) {
