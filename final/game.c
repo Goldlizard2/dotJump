@@ -129,10 +129,6 @@ static void duck(void)
 {
     clearDisplay();
     pio_config_set(rows[2], PIO_OUTPUT_LOW);
-    // TODO check if this loop can be removed
-    for (uint8_t i = 0; i < 5; i++) {
-        pio_config_set(cols[i], PIO_OUTPUT_HIGH);
-    }
     for (uint8_t j = 3; j<5 ; j++) {
          pio_config_set(cols[j], PIO_OUTPUT_LOW);
     }
