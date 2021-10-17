@@ -237,7 +237,7 @@ int main (void)
             }
 
             // Update obstacles
-            if (objectCounter == (OBJECT_UPDATE_COUNT - speedIncrease) {
+            if (objectCounter == (OBJECT_UPDATE_COUNT - speedIncrease)) {
                 // Check if a collision occured
                 gameOver = collision(lowObjectLoc, highObjectLoc, jumping, ducking);
                 if (dodge(lowObjectLoc, highObjectLoc, jumping, ducking)) {
