@@ -80,17 +80,6 @@ static void characterObject(void)
     }
 }
 
-static void setLedMatrix(void)
-{
-    for (uint8_t i = 0; i < LEDMAT_ROWS_NUM; i++) {
-        pio_config_set (rows[i], PIO_OUTPUT_HIGH);
-
-        if (i < 7) {
-            pio_config_set (cols[i], PIO_OUTPUT_HIGH);
-        }
-    }
-}
-
 static void highObject(uint8_t row)
 /*3 led object from the roof that can be ducked under*/
 {
@@ -162,7 +151,7 @@ int main (void)
         navswitch_init ();
         initialize();
         srand(time(NULL));
-        setLedMatrix();
+        clearDisplay();
         TCCR1A = 0x00;
         TCCR1B = 0x05;
         TCCR1C = 0x00;
