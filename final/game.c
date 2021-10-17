@@ -198,7 +198,7 @@ int main (void)
             // Update counters
             objectCounter++;
             moveCounter++;
-            randomItem = rand() % 2;
+            
             // Display objects and player
             delay(5);
             lowObject(lowObjectLoc);
@@ -243,9 +243,11 @@ int main (void)
                 highObjectLoc--;
                 if (lowObjectLoc>10 && randomItem == 1) {
                     lowObjectLoc = 8;
+                    randomItem = rand() % 2;
                 }
                 if (highObjectLoc>10 && randomItem == 0) {
-                    highObjectLoc = 8;
+                    highObjectLoc = 10;
+                    randomItem = rand() % 2;
                 }
             }
 
