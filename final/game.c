@@ -6,11 +6,13 @@
 #include "button.h"
 #include "pio.h"
 #include <avr/io.h>
+#include <stdio.h>
+#include <string.h>
 
-#define MESSAGE_RATE 40
+#define MESSAGE_RATE 50
 #define PACER_RATE 1000
 #define MENU_TEXT "WELCOME TO LIGHT JUMP"
-#define END_TEXT "GAME OVER"
+#define END_TEXT "POINTS"
 
 void initialize(void)
 {
@@ -143,6 +145,12 @@ the player is performing the correct action to dodge */
     return ((lowObjectLoc == 2 && !jump) || (highObjectLoc == 2 && !duck));
 }
 
+bool dodge(uint8_t lowObjectLoc, uint8_t highObjectLoc, bool jump, bool duck)
+/* Checks if player is currently dodging an obstacle */
+{
+    return ((lowObjectLoc == 2 && jump) || (highObjectLoc == 2 && duck));
+}
+
 bool navSwitchMoved(void)
 {
     return (navswitch_push_event_p(NAVSWITCH_PUSH) || navswitch_push_event_p(NAVSWITCH_NORTH) || navswitch_push_event_p(NAVSWITCH_SOUTH) || navswitch_push_event_p(NAVSWITCH_EAST) || navswitch_push_event_p(NAVSWITCH_WEST));
@@ -162,10 +170,12 @@ int main (void)
         TCCR1C = 0x00;
         uint8_t highObjectLoc = 9;
         uint8_t lowObjectLoc = 6;
-        uint16_t objectCounter = 0;
+        uint8_t objectCounter = 0;
         uint8_t moveCounter = 0;
+        uint16_t score = 0;
         bool jumping = false;
         bool ducking = false;
+        bool gameOver = false;
 
         tinygl_text(MENU_TEXT);
         // Start Menu
@@ -178,7 +188,7 @@ int main (void)
 
 
         // Main game loop (note - delay should be kept to ~16ms)
-        while (1)
+        while (!gameOver)
         {
             // Display player in current state
             if (jumping) {
@@ -217,13 +227,21 @@ int main (void)
                 moveCounter = 0;
             }
 
-            // Check if a collision occured (TODO check if this could be done when object is updated)
-            if(collision(lowObjectLoc, highObjectLoc, jumping, ducking)) {
-                break;
+
+            // Reset player state
+            if (moveCounter == 70) {
+                moveCounter = 0;
+                jumping = false;
+                ducking = false;
             }
 
             // Update obstacles
             if (objectCounter == 30) {
+                // Check if a collision occured
+                gameOver = collision(lowObjectLoc, highObjectLoc, jumping, ducking);
+                if (dodge(lowObjectLoc, highObjectLoc, jumping, ducking)) {
+                    score++;
+                }
                 objectCounter = 0;
                 lowObjectLoc--;
                 highObjectLoc--;
@@ -235,24 +253,22 @@ int main (void)
                 }
             }
 
-            // Reset player state
-            if (moveCounter == 70) {
-                moveCounter = 0;
-                jumping = false;
-                ducking = false;
-            }
-
         }
 
         // Game over screen
-        tinygl_text(END_TEXT);
+        // Convert score to a string
+        char sscore[8];
+        sprintf(sscore, "%d ", score);
+        // Set end game text
+        tinygl_text(strcat(sscore, END_TEXT));
+        // Display end game screen
         while (!navSwitchMoved()) {
             pacer_wait();
             tinygl_update();
             navswitch_update();
         }
         // Delay to prevent accidental extra press
-        delay(100);
+        delay(50);
         navswitch_update();
     }
 
