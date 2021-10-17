@@ -1,3 +1,9 @@
+/** @file   game.c
+    @authors Okoko Anainga, Daniel Pallesen
+    @date   17/10/2021
+    @brief  The main game file for a duck and jump game
+*/
+
 #include "system.h"
 #include "tinygl.h"
 #include "pacer.h"
@@ -20,6 +26,7 @@
 
 void initialize(void)
 {
+    srand(time(NULL));
     tinygl_init(PACER_RATE);
     pacer_init (PACER_RATE);
     tinygl_font_set (&font5x5_1);
@@ -44,12 +51,6 @@ static const pio_t cols[] =
     LEDMAT_COL4_PIO, LEDMAT_COL5_PIO
 };
 
-/*static void display_column (uint8_t row_pattern[5], uint8_t current_column)
-{
-
-
-}*/
-
 static void delay (uint16_t milliseconds)
 {
     TCNT1 = 0;
@@ -58,6 +59,13 @@ static void delay (uint16_t milliseconds)
         continue;
     }
 
+}
+
+uint8_t randomNumberGenerator(void)
+{
+    uint8_t randomItem = 0;
+    randomItem = rand() % 2;
+    return randomItem;
 }
 
 static void clearDisplay(void)
@@ -77,17 +85,6 @@ static void characterObject(void)
     pio_config_set(rows[2], PIO_OUTPUT_LOW);
     for (uint8_t i = 2; i < 5; i++) {
         pio_config_set(cols[i], PIO_OUTPUT_LOW);
-    }
-}
-
-static void setLedMatrix(void)
-{
-    for (uint8_t i = 0; i < LEDMAT_ROWS_NUM; i++) {
-        pio_config_set (rows[i], PIO_OUTPUT_HIGH);
-
-        if (i < 7) {
-            pio_config_set (cols[i], PIO_OUTPUT_HIGH);
-        }
     }
 }
 
@@ -156,24 +153,22 @@ bool navSwitchMoved(void)
 int main (void)
 {
     // Full game loop
+    uint8_t randomItem = randomNumberGenerator();
     while(1) {
 
         system_init ();
         navswitch_init ();
         initialize();
-        srand(time(NULL));
-        setLedMatrix();
+        clearDisplay();
         TCCR1A = 0x00;
         TCCR1B = 0x05;
         TCCR1C = 0x00;
-        uint8_t randomItem = 0;
-        uint8_t highObjectLoc = 6;
+        uint8_t highObjectLoc = 7;
         uint8_t lowObjectLoc = 9;
         uint8_t objectCounter = 0;
         uint8_t moveCounter = 0;
         uint8_t speedIncrease = 0;
         uint16_t score = 0;
-
         bool jumping = false;
         bool ducking = false;
         bool gameOver = false;
@@ -237,7 +232,7 @@ int main (void)
             }
 
             // Update obstacles
-            if (objectCounter == (OBJECT_UPDATE_COUNT - speedIncrease) {
+            if (objectCounter == (OBJECT_UPDATE_COUNT - speedIncrease)) {
                 // Check if a collision occured
                 gameOver = collision(lowObjectLoc, highObjectLoc, jumping, ducking);
                 if (dodge(lowObjectLoc, highObjectLoc, jumping, ducking)) {
@@ -251,7 +246,8 @@ int main (void)
                     lowObjectLoc--;
                     if (lowObjectLoc>20) {
                         lowObjectLoc = 7;
-                        randomItem = rand() % 2;
+                        randomItem = randomNumberGenerator();
+                        
                     }
 
                 }
@@ -259,7 +255,7 @@ int main (void)
                     highObjectLoc--;
                     if (highObjectLoc>20) {
                         highObjectLoc = 7;
-                        randomItem = rand() % 2;
+                        randomItem = randomNumberGenerator();
                     }
                 }
             }
