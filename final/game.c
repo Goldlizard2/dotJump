@@ -215,14 +215,14 @@ int main (void)
 
 
             // Check if player is trying to jump
-            if (navswitch_push_event_p (NAVSWITCH_WEST) && !ducking)
+            if (navswitch_push_event_p (NAVSWITCH_WEST) && !ducking && !jumping)
             {
                 jumping = true;
                 moveCounter = 0;
             }
 
             // Check is player is trying to duck
-            if (navswitch_push_event_p (NAVSWITCH_EAST) && !jumping)
+            if (navswitch_push_event_p (NAVSWITCH_EAST) && !jumping && !ducking)
             {
                 ducking = true;
                 moveCounter = 0;
@@ -243,8 +243,8 @@ int main (void)
                 if (dodge(lowObjectLoc, highObjectLoc, jumping, ducking)) {
                     score++;
                 }
-                if (speedIncrease < 15) {
-                        speedIncrease = (score % 5);
+                if (speedIncrease < 20) {
+                        speedIncrease = (score % 2);
                 }
                 objectCounter = 0;
                 if (randomItem == 1) {
