@@ -229,13 +229,12 @@ int main (void)
             // Update obstacles
             if (objectCounter == 30) {
                 objectCounter = 0;
-                
                 lowObjectLoc--;
                 highObjectLoc--;
-                if (lowObjectLoc > 10 && itemRandom == 0) {
+                if (itemRandom == 0){
                     lowObjectLoc = 8;
                 }
-                if (highObjectLoc > 10 && itemRandom == 1) { 
+                if (itemRandom == 1){
                     highObjectLoc = 8;
                 }
             }
