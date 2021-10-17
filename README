@@ -1,40 +1,24 @@
-Use this directory for your final game and its module(s).  Only the
-files in this directory will be marked.
-
-Ensure you use the git add command to add your files to the git
-repository.  For example,
-
-git add module.c
-
-Then use the git commit command to add the file contents
-
-git commit -m "Added file" module.c
-
-The use the git push command to copy the changes to the remote git server
-
-git push
-
 Constructing game:
 First clone the latest copy from git, to the final folder under:
 
-user/Documents/Ence260/embeddedSystems/ence260-ucfk4/assignment/final
+~/ence260-ucfk4/assignment/final
 
 From here reset your UCFK4 with the S2 button 
-Then run make program command to make the program on the UCFK4
+Then run the "make program" command to compile and run the game on the UCFK4
 
 At this point you will be greeted with WELCOME TO LIGHT JUMP
-point the board towards you with the yello led in the top right and the micro USB port pointed to the right.
+point the board towards you such that LED2 in the top right and the micro USB port pointed to the right.
 
-When ready to start playing press the joystick in
-your player should appear as a 3 LED high figure 
+When ready to start playing move the joystick
+your player will appear as a 3 LED high figure
 The controls are:
 
-Pressing the joystick up to jump
-Pressing the joystick down to duck
+Joystick up to jump
+Joystick down to duck
 
-From here items will gradually flow at you along the cieling of the display or the floor and the object of the game is to doge as many of the items as possible
+From here objects will gradually move towards you along the top and bottom of the display at an increasing speed. The objective of the game is to dodge as many objects as possible.
 
-You have one life and will be greeted with "Game Over" if you unsuccesful avoid an item.
+You have one life and the game will end if you fail to dodge an object.
 
-The amount of items dodged will then be desplayed and you can press the centre again to restart.
+The number of objects dodged will then be displayed and you can move the joystick again to return to the main menu.
 
