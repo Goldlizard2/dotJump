@@ -1,4 +1,3 @@
 final/*.o
 final/*.hex
 final/*.out
-final/Makefile.test
