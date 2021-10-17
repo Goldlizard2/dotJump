@@ -164,8 +164,8 @@ int main (void)
         TCCR1B = 0x05;
         TCCR1C = 0x00;
         uint8_t randomItem = 0;
-        uint8_t highObjectLoc = 10;
-        uint8_t lowObjectLoc = 7;
+        uint8_t highObjectLoc = 6;
+        uint8_t lowObjectLoc = 9;
         uint8_t objectCounter = 0;
         uint8_t moveCounter = 0;
         uint16_t score = 0;
@@ -232,7 +232,7 @@ int main (void)
             }
 
             // Update obstacles
-            if (objectCounter == 30) {
+            if (objectCounter == 20) {
                 // Check if a collision occured
                 gameOver = collision(lowObjectLoc, highObjectLoc, jumping, ducking);
                 if (dodge(lowObjectLoc, highObjectLoc, jumping, ducking)) {
@@ -241,16 +241,16 @@ int main (void)
                 objectCounter = 0;
                 if (randomItem == 1) {
                     lowObjectLoc--;
-                    if (lowObjectLoc>10) {
-                        lowObjectLoc = 8;
+                    if (lowObjectLoc>20) {
+                        lowObjectLoc = 7;
                         randomItem = rand() % 2;
                     }
                     
                 }
                 if (randomItem == 0) {
                     highObjectLoc--;
-                    if (highObjectLoc>10) {
-                        highObjectLoc = 8;
+                    if (highObjectLoc>20) {
+                        highObjectLoc = 7;
                         randomItem = rand() % 2;
                     }
                 }
