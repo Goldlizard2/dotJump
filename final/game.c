@@ -164,8 +164,8 @@ int main (void)
         TCCR1B = 0x05;
         TCCR1C = 0x00;
         uint8_t randomItem = 0;
-        uint8_t highObjectLoc = 9;
-        uint8_t lowObjectLoc = 6;
+        uint8_t highObjectLoc = 10;
+        uint8_t lowObjectLoc = 7;
         uint8_t objectCounter = 0;
         uint8_t moveCounter = 0;
         uint16_t score = 0;
@@ -239,18 +239,24 @@ int main (void)
                     score++;
                 }
                 objectCounter = 0;
-                lowObjectLoc--;
-                highObjectLoc--;
-                if (lowObjectLoc>10 && randomItem == 1) {
-                    lowObjectLoc = 8;
-                    randomItem = rand() % 2;
+                if (randomItem == 1) {
+                    lowObjectLoc--;
+                    if (lowObjectLoc>10) {
+                        lowObjectLoc = 8;
+                        randomItem = rand() % 2;
+                    }
+                    
                 }
-                if (highObjectLoc>10 && randomItem == 0) {
-                    highObjectLoc = 10;
-                    randomItem = rand() % 2;
+                if (randomItem == 0) {
+                    highObjectLoc--;
+                    if (highObjectLoc>10) {
+                        highObjectLoc = 8;
+                        randomItem = rand() % 2;
+                    }
                 }
             }
 
+            
         }
 
         // Game over screen
