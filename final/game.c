@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include "game.h"
 
 #define MESSAGE_RATE 50
 #define PACER_RATE 1000
