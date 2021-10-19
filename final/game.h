@@ -33,7 +33,7 @@ static void lowObject(uint8_t row);
 //makes the character jump 2 blocks high to avoid low object
 static void jump(void);
 
-// makes the charchter duck one object lower so it can avoid a high object
+// makes the character duck one object lower so it can avoid a high object
 static void duck(void);
 
 // returns a boolean object of a collision
