@@ -1,22 +1,13 @@
 
 #include "system.h"
-#include "tinygl.h"
-#include "pacer.h"
-#include "../fonts/font5x5_1.h"
 #include "navswitch.h"
-#include "button.h"
-#include "pio.h"
 #include <avr/io.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <time.h>
 #include <math.h>
 #include "game.h"
 
 
-#define MESSAGE_RATE 50
-#define PACER_RATE 1000
 #define MENU_TEXT "WELCOME TO LIGHT JUMP"
 #define END_TEXT "POINTS"
 #define PLAYER_UPDATE_COUNT 60

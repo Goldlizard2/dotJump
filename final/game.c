@@ -1,6 +1,6 @@
 /** @file   game.c
     @authors Okoko Anainga, Daniel Pallesen
-    @date   17/10/2021
+    @date   19/10/2021
     @brief  The main game file for LIGHT RUNNER
 */
 
@@ -16,7 +16,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>
 #include "game.h"
 
 

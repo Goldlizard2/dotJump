@@ -1,6 +1,6 @@
-/** @file   game.c
+/** @file   game.h
     @authors Okoko Anainga, Daniel Pallesen
-    @date   17/10/2021
+    @date   19/10/2021
     @brief  The main game header file for the game
 */
 
@@ -33,13 +33,8 @@ void lowObject(uint8_t row);
 //makes the character jump 2 blocks high to avoid low object
 void jump(void);
 
-<<<<<<< HEAD
-// makes the charchter duck one object lower so it can avoid a high object
-void duck(void);
-=======
 // makes the character duck one object lower so it can avoid a high object
-static void duck(void);
->>>>>>> 155e4595ee4f7c0c96257c24b2162fa6ef27cccb
+void duck(void);
 
 // returns a boolean object of a collision
 bool collision(uint8_t lowObjectLoc, uint8_t highObjectLoc, bool jump, bool duck);
