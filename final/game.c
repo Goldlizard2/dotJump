@@ -147,7 +147,7 @@ bool dodge(uint8_t lowObjectLoc, uint8_t highObjectLoc, bool jump, bool duck)
     return ((lowObjectLoc == 2 && jump) || (highObjectLoc == 2 && duck));
 }
 
-/* Returns true if navswitch is being moved */
+/* Returns true if navswitch is being */
 bool navSwitchMoved(void)
 {
     return (navswitch_push_event_p(NAVSWITCH_PUSH) || navswitch_push_event_p(NAVSWITCH_NORTH) || navswitch_push_event_p(NAVSWITCH_SOUTH) || navswitch_push_event_p(NAVSWITCH_EAST) || navswitch_push_event_p(NAVSWITCH_WEST));

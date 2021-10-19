@@ -6,6 +6,8 @@
 
 
 #include "system.h"
+#include "tinygl.h"
+#include "pacer.h"
 #include "navswitch.h"
 #include <avr/io.h>
 #include <stdio.h>
