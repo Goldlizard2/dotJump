@@ -1,7 +1,7 @@
 /** @file   game.c
     @authors Okoko Anainga, Daniel Pallesen
     @date   19/10/2021
-    @brief  The main game file for LIGHT RUNNER
+    @brief  The main functions for LIGHT RUNNER
 */
 
 #include "system.h"
@@ -22,6 +22,7 @@
 #define PACER_RATE 1000
 #define MESSAGE_RATE 50
 
+/* Basic setup for display, pacer and random number generator */
 void initialize(void)
 {
     srand(time(NULL));
@@ -33,7 +34,7 @@ void initialize(void)
     tinygl_text_dir_set (TINYGL_TEXT_DIR_ROTATE);
 }
 
-/** Define PIO pins driving LED matrix rows.  */
+/* Define PIO pins driving LED matrix rows.  */
 static const pio_t rows[] =
 {
     LEDMAT_ROW1_PIO, LEDMAT_ROW2_PIO, LEDMAT_ROW3_PIO,
@@ -49,6 +50,7 @@ static const pio_t cols[] =
     LEDMAT_COL4_PIO, LEDMAT_COL5_PIO
 };
 
+/* Causes program to wait for specified amount of time in milliseconds */
 void delay (uint16_t milliseconds)
 {
     TCNT1 = 0;
@@ -58,7 +60,7 @@ void delay (uint16_t milliseconds)
     }
 
 }
-
+/* Returns a 1 or a 0 randomly */
 uint8_t randomNumberGenerator(void)
 {
     uint8_t randomItem = 0;
@@ -66,6 +68,7 @@ uint8_t randomNumberGenerator(void)
     return randomItem;
 }
 
+/* Sets all display pins to high */
 void clearDisplay(void)
 {
     for (uint8_t i = 0; i < 5; i++) {
@@ -86,8 +89,8 @@ void characterObject(void)
     }
 }
 
+/* three led object from the roof that can be ducked under */
 void highObject(uint8_t row)
-/*3 led object from the roof that can be ducked under*/
 {
     if (row<=6) {
         clearDisplay();
@@ -98,8 +101,8 @@ void highObject(uint8_t row)
     }
 }
 
+/* two led object along the ground that can be jumped */
 void lowObject(uint8_t row)
-/*one led object along the ground that can be jumped*/
 {
     if (row<=6) {
         clearDisplay();
@@ -110,8 +113,8 @@ void lowObject(uint8_t row)
     }
 }
 
+/* jump moves the character object up two leds then falls */
 void jump(void)
-/*jump moves the character object up two leds then falls*/
 {
     clearDisplay();
     pio_config_set(rows[2], PIO_OUTPUT_LOW);
@@ -120,8 +123,8 @@ void jump(void)
     }
 }
 
+/* duck moves the character object to lowCharacherObject and then resets to tallCharacterObject */
 void duck(void)
-/*duck moves the character object to lowCharacherObject and then resets to tallCharacterObject*/
 {
     clearDisplay();
     pio_config_set(rows[2], PIO_OUTPUT_LOW);
@@ -130,19 +133,21 @@ void duck(void)
     }
 }
 
-bool collision(uint8_t lowObjectLoc, uint8_t highObjectLoc, bool jump, bool duck)
 /* Checks if high and low objects are at player position and if so that
 the player is performing the correct action to dodge */
+bool collision(uint8_t lowObjectLoc, uint8_t highObjectLoc, bool jump, bool duck)
+
 {
     return ((lowObjectLoc == 2 && !jump) || (highObjectLoc == 2 && !duck));
 }
 
-bool dodge(uint8_t lowObjectLoc, uint8_t highObjectLoc, bool jump, bool duck)
 /* Checks if player is currently dodging an obstacle */
+bool dodge(uint8_t lowObjectLoc, uint8_t highObjectLoc, bool jump, bool duck)
 {
     return ((lowObjectLoc == 2 && jump) || (highObjectLoc == 2 && duck));
 }
 
+/* Returns true if navswitch is being moved */
 bool navSwitchMoved(void)
 {
     return (navswitch_push_event_p(NAVSWITCH_PUSH) || navswitch_push_event_p(NAVSWITCH_NORTH) || navswitch_push_event_p(NAVSWITCH_SOUTH) || navswitch_push_event_p(NAVSWITCH_EAST) || navswitch_push_event_p(NAVSWITCH_WEST));

@@ -1,3 +1,9 @@
+/** @file   gameEnvironment.c
+    @authors Okoko Anainga, Daniel Pallesen
+    @date   19/10/2021
+    @brief  Contains the main game loop for LIGHT RUNNER
+*/
+
 
 #include "system.h"
 #include "navswitch.h"
@@ -105,6 +111,8 @@ int main (void)
                         speedIncrease = floor(score / 2);
                 }
                 objectCounter = 0;
+
+                // Creates low object
                 if (randomItem == 1) {
                     lowObjectLoc--;
                     if (lowObjectLoc>20) {
@@ -114,6 +122,7 @@ int main (void)
                     }
 
                 }
+                // Creates high object
                 if (randomItem == 0) {
                     highObjectLoc--;
                     if (highObjectLoc>20) {
@@ -138,9 +147,8 @@ int main (void)
             tinygl_update();
             navswitch_update();
         }
-        // Delay to prevent accidental extra press
+        // Delay to prevent accidental extra navswitch press
         delay(50);
         navswitch_update();
     }
-
 }
