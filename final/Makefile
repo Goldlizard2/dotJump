@@ -5,18 +5,21 @@
 
 # Definitions.
 CC = avr-gcc
-CFLAGS = -mmcu=atmega32u2 -Os -Wall -Wstrict-prototypes -Wextra -g -I. -I../../utils -I../../fonts -I../../drivers -I../../drivers/avr -std=c99
+CFLAGS = -mmcu=atmega32u2 -Os -Wall -Wstrict-prototypes -Wextra -g -I. -I../../../utils -I../../../fonts -I../../../drivers -I../../../drivers/avr -std=c99
 OBJCOPY = avr-objcopy
 SIZE = avr-size
 DEL = rm
 
 
 # Default target.
-all: game.out
+all: gameEnvironment.out
 
 
 # Compile: create object files from C source files.
-game.o: game.c ../../../drivers/avr/system.h
+gameEnvironment.o: gameEnvironment.c ../../../drivers/avr/system.h game.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
+game.o: game.c ../../../drivers/avr/system.h game.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
 pio.o: ../../../drivers/avr/pio.c ../../../drivers/avr/pio.h ../../../drivers/avr/system.h
@@ -52,7 +55,7 @@ button.o: ../../../drivers/button.c ../../../drivers/avr/pio.h ../../../drivers/
 
 
 # Link: create ELF output file from object files.
-game.out: game.o pio.o system.o timer.o display.o ledmat.o font.o pacer.o tinygl.o navswitch.o button.o
+game.out: gameEnvironment.o game.o pio.o system.o timer.o display.o ledmat.o font.o pacer.o tinygl.o navswitch.o button.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 	$(SIZE) $@
 
